@@ -16,7 +16,7 @@ public:
     matrix(string value);
     // Function
     friend ostream &operator<<(ostream &os, const matrix &matrix);
-    int det();
+    float det();
     matrix sub(int srow, int scol, int erow, int ecol);
     matrix substr(int row, int col);
     void insert(int srow, int scol, matrix matrix);
@@ -143,25 +143,30 @@ matrix matrix::sub(int srow, int scol, int erow, int ecol)
     return result;
 }
 
-matrix matrix::substr(int row, int col){
+matrix matrix::substr(int row, int col)
+{
     if (row < 0 || col < 0 || row >= this->row || col >= this->col)
     {
         cerr << "Overload Matrix";
         return -1;
     }
-    else{
+    else
+    {
         matrix result(this->row - 1, this->col - 1);
         bool addr = 0, addc = 0;
         for (int i = 0; i < this->row; i++)
         {
             addc = 0;
-            if(i != row)
-        for (int j = 0; j < this->col; j++)
-        {
-            if(j != col)
-            result.cell[i - (int)addr][j - (int)addc] = this->cell[i][j];
-            else addc = 1;
-        }else addr = 1;
+            if (i != row)
+                for (int j = 0; j < this->col; j++)
+                {
+                    if (j != col)
+                        result.cell[i - (int)addr][j - (int)addc] = this->cell[i][j];
+                    else
+                        addc = 1;
+                }
+            else
+                addr = 1;
         }
         return result;
     }
@@ -183,7 +188,7 @@ void matrix::insert(int srow, int scol, matrix matrix)
     }
 }
 
-int matrix::det()
+float matrix::det()
 {
     if (col != row)
     {
@@ -192,17 +197,28 @@ int matrix::det()
     }
     else
     {
+        if (row ==  1)
+            return cell[0][0];
+        else
+        {
+            int result = 0;
+            for (int i = 0; i < row; i++)
+            {
+                result += cell[i][0] * pow(-1, i + 1 + 1) * ((this->substr(i, 0)).det());
+            }
+            return result;
+        }
     }
     return 0;
 }
 
 int main()
 {
-    matrix s("2 1 5 8 9/45 5 5 4/ 4 5 8 7 5");
+    matrix s("2 1 5 8/1 5 5 4/ 5 8 7 5/2 3 4 5");
     // cout << s.cell[2][3] << endl;
     cout << s.col;
     cout << s.row << endl;
     cout << s << endl;
-    cout << s.substr(1, 1);
+    cout << s.det();
     return 0;
 }

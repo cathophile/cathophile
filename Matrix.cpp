@@ -4,6 +4,7 @@
 #include <vector>
 using namespace std;
 class matrix
+//Xin chào
 {
 public:
     vector<vector<int>> cell = {{}};

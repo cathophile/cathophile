@@ -11,18 +11,24 @@ public:
     int col = cell[0].size();
     // Constructor and Destructor
     matrix();
+    matrix(vector<vector<int>> matrix);
     matrix(int row, int col);
     matrix(int sqr);
-    matrix(string value);
     // Function
     friend ostream &operator<<(ostream &os, const matrix &matrix);
     float det();
     matrix sub(int srow, int scol, int erow, int ecol);
     matrix substr(int row, int col);
     void insert(int srow, int scol, matrix matrix);
+    matrix adj();
 };
 
 // constructor
+matrix::matrix(vector<vector<int>> matrix){
+    this->cell = matrix;
+    this->col = matrix.size();
+    this->row = matrix[0].size();
+}
 matrix::matrix(int row, int col)
 {
     this->row = row;
@@ -47,46 +53,7 @@ matrix::matrix(int sqr)
     }
 }
 
-matrix::matrix(string value)
-{
-    int row = 0;
-    int tmp = 0;
-    for (int i = 0; i < value.length(); i++)
-    {
-        if ((int)value[i] >= 48 && (int)value[i] <= 57)
-        {
-            tmp = tmp * 10 + ((int)value[i] - 48);
-        }
-        else
-        {
-            if (value[i] == ' ' && (this->cell[row].size() <= this->cell[0].size()))
-            {
-                this->cell[row].push_back(tmp);
-                tmp = 0;
-            }
-            else
-            {
-                this->cell[row].push_back(tmp);
-                tmp = 0;
-                this->cell.push_back({});
-                row++;
-            }
-        }
-    }
-    this->cell[row][this->cell[0].size() - 1] = tmp;
-    this->col = cell[0].size();
-    this->row = cell.size();
-    for (int i = 0; i < row; i++)
-    {
-        if (this->cell[i].size() != this->col)
-        {
-            for (int j = this->cell[i].size(); j < this->col; j++)
-            {
-                this->cell[i].push_back(0);
-            }
-        }
-    }
-}
+
 
 // friend function
 ostream &operator<<(ostream &os, const matrix &matrix)
@@ -95,23 +62,15 @@ ostream &operator<<(ostream &os, const matrix &matrix)
     for (int i = 0; i < matrix.row; i++)
         for (int j = 0; j < matrix.col; j++)
         {
-            if (matrix.cell[i][j] > max)
-                max = matrix.cell[i][j];
+            if (to_string(matrix.cell[i][j]).length() > max)
+                max = to_string(matrix.cell[i][j]).length();
         }
-    if (max != 0)
-        max = log10(max);
     for (int i = 0; i < matrix.row; i++)
     {
         for (int j = 0; j < matrix.col; j++)
         {
             if (max != 0)
-                if (matrix.cell[i][j] == 0)
-                {
-                    for (int k = 0; k < max; k++)
-                        os << ' ';
-                }
-                else
-                    for (int k = 0; k < ((max - log10(matrix.cell[i][j]))); k++)
+                    for (int k = 0; k < ((max - to_string(matrix.cell[i][j]).length())); k++)
                     {
                         os << ' ';
                     }
@@ -211,14 +170,32 @@ float matrix::det()
     }
     return 0;
 }
+matrix matrix::adj(){
+    if (col != row){
+        cerr << "Not Square Matrix ";
+        return -1;
+    }else{
+        matrix result(row, col);
+        for (int i = 0; i < row; i++){
+            for (int j = 0; j < col; j++){
+                result.cell[j][i] = pow(-1, i + j + + 1 + 1) * ((this->substr(i, j)).det());
+            }
+        }
+        return result;
+    }
+}
 
 int main()
 {
-    matrix s("2 1 5 8/1 5 5 4/ 5 8 7 5/2 3 4 5");
+    matrix s(
+        {{1,0,1},
+        {2,-1,3},
+        {-4,1,5}});
     // cout << s.cell[2][3] << endl;
     cout << s.col;
     cout << s.row << endl;
-    cout << s << endl;
-    cout << s.det();
+    cout << s;
+    cout << s.adj();
+    // cout << 
     return 0;
 }

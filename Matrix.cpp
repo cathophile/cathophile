@@ -4,8 +4,6 @@
 #include <vector>
 using namespace std;
 class matrix
-//Xin chào
-//Change
 {
 public:
     vector<vector<int>> cell = {{}};
@@ -20,7 +18,7 @@ public:
     friend ostream &operator<<(ostream &os, const matrix &matrix);
     int det();
     matrix sub(int srow, int scol, int erow, int ecol);
-    matrix substr();
+    matrix substr(int row, int col);
     void insert(int srow, int scol, matrix matrix);
 };
 
@@ -145,6 +143,30 @@ matrix matrix::sub(int srow, int scol, int erow, int ecol)
     return result;
 }
 
+matrix matrix::substr(int row, int col){
+    if (row < 0 || col < 0 || row >= this->row || col >= this->col)
+    {
+        cerr << "Overload Matrix";
+        return -1;
+    }
+    else{
+        matrix result(this->row - 1, this->col - 1);
+        bool addr = 0, addc = 0;
+        for (int i = 0; i < this->row; i++)
+        {
+            addc = 0;
+            if(i != row)
+        for (int j = 0; j < this->col; j++)
+        {
+            if(j != col)
+            result.cell[i - (int)addr][j - (int)addc] = this->cell[i][j];
+            else addc = 1;
+        }else addr = 1;
+        }
+        return result;
+    }
+}
+
 void matrix::insert(int srow, int scol, matrix matrix)
 {
     if (matrix.row + srow - this->row > 0 || matrix.col + scol - this->col > 0)
@@ -174,15 +196,13 @@ int matrix::det()
     return 0;
 }
 
-// int det(){
-//     vector<bool> tmp;
-// }
 int main()
 {
     matrix s("2 1 5 8 9/45 5 5 4/ 4 5 8 7 5");
     // cout << s.cell[2][3] << endl;
     cout << s.col;
     cout << s.row << endl;
-    cout << s.sub(0, 0, 2, 5);
+    cout << s << endl;
+    cout << s.substr(1, 1);
     return 0;
 }

@@ -16,6 +16,14 @@ public:
     matrix(int sqr);
     // Function
     friend ostream &operator<<(ostream &os, const matrix &matrix);
+    friend matrix operator*(double num, matrix &srcmatrix);
+    matrix operator*(double num);
+    friend matrix operator+(double num, matrix &srcmatrix);
+    matrix operator+(double num);
+    friend matrix operator-(double num, matrix &srcmatrix);
+    matrix operator-(double num);
+    matrix operator+(matrix addmatrix);
+    matrix operator-(matrix minumatrix);
     float det();
     matrix sub(int srow, int scol, int erow, int ecol);
     matrix substr(int row, int col);
@@ -24,7 +32,8 @@ public:
 };
 
 // constructor
-matrix::matrix(vector<vector<int>> matrix){
+matrix::matrix(vector<vector<int>> matrix)
+{
     this->cell = matrix;
     this->col = matrix.size();
     this->row = matrix[0].size();
@@ -53,8 +62,6 @@ matrix::matrix(int sqr)
     }
 }
 
-
-
 // friend function
 ostream &operator<<(ostream &os, const matrix &matrix)
 {
@@ -70,10 +77,10 @@ ostream &operator<<(ostream &os, const matrix &matrix)
         for (int j = 0; j < matrix.col; j++)
         {
             if (max != 0)
-                    for (int k = 0; k < ((max - to_string(matrix.cell[i][j]).length())); k++)
-                    {
-                        os << ' ';
-                    }
+                for (int k = 0; k < ((max - to_string(matrix.cell[i][j]).length())); k++)
+                {
+                    os << ' ';
+                }
             os << matrix.cell[i][j];
             if (j != matrix.cell[0].size() - 1)
                 os << ' ';
@@ -83,6 +90,97 @@ ostream &operator<<(ostream &os, const matrix &matrix)
     return os;
 }
 
+matrix matrix::operator*(double num)
+{
+    matrix result(this->row, this->col);
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            result.cell[i][j] = this->cell[i][j] * num;
+    return result;
+}
+
+matrix operator*(double num, matrix &srcmatrix)
+{
+    matrix result(srcmatrix.row, srcmatrix.col);
+    for (int i = 0; i < srcmatrix.row; i++)
+        for (int j = 0; j < srcmatrix.col; j++)
+            result.cell[i][j] = srcmatrix.cell[i][j] * num;
+    return result;
+}
+
+matrix matrix::operator+(double num)
+{
+    matrix result(this->row, this->col);
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            result.cell[i][j] = this->cell[i][j] + num;
+    return result;
+}
+
+matrix operator+(double num, matrix &srcmatrix)
+{
+    matrix result(srcmatrix.row, srcmatrix.col);
+    for (int i = 0; i < srcmatrix.row; i++)
+        for (int j = 0; j < srcmatrix.col; j++)
+            result.cell[i][j] = srcmatrix.cell[i][j] + num;
+    return result;
+}
+
+matrix matrix::operator-(double num)
+{
+    matrix result(this->row, this->col);
+    for (int i = 0; i < row; i++)
+        for (int j = 0; j < col; j++)
+            result.cell[i][j] = this->cell[i][j] - num;
+    return result;
+}
+
+matrix operator-(double num, matrix &srcmatrix)
+{
+    matrix result(srcmatrix.row, srcmatrix.col);
+    for (int i = 0; i < srcmatrix.row; i++)
+        for (int j = 0; j < srcmatrix.col; j++)
+            result.cell[i][j] = num - srcmatrix.cell[i][j];
+    return result;
+}
+
+matrix matrix::operator+(matrix addmatrix)
+{
+    if (this->row != addmatrix.row || this->col != addmatrix.col)
+    {
+        cerr << "Error: matrix size is not equal" << endl;
+        return -1;
+    }
+    else
+    {
+        matrix result(this->row, this->col);
+        for (int i = 0; i < col; i++)
+            for (int j = 0; j < col; j++)
+            {
+                result.cell[i][j] = this->cell[i][j] + addmatrix.cell[i][j];
+            }
+        return result;
+    }
+}
+
+matrix matrix::operator-(matrix minumatrix)
+{
+    if (this->row != minumatrix.row || this->col != minumatrix.col)
+    {
+        cerr << "Error: matrix size is not equal" << endl;
+        return -1;
+    }
+    else
+    {
+        matrix result(this->row, this->col);
+        for (int i = 0; i < col; i++)
+            for (int j = 0; j < col; j++)
+            {
+                result.cell[i][j] = this->cell[i][j] - minumatrix.cell[i][j];
+            }
+        return result;
+    }
+}
 matrix matrix::sub(int srow, int scol, int erow, int ecol)
 {
     if (srow < 0 || scol < 0 || erow >= this->row || ecol >= this->col)
@@ -156,7 +254,7 @@ float matrix::det()
     }
     else
     {
-        if (row ==  1)
+        if (row == 1)
             return cell[0][0];
         else
         {
@@ -170,15 +268,21 @@ float matrix::det()
     }
     return 0;
 }
-matrix matrix::adj(){
-    if (col != row){
+matrix matrix::adj()
+{
+    if (col != row)
+    {
         cerr << "Not Square Matrix ";
         return -1;
-    }else{
+    }
+    else
+    {
         matrix result(row, col);
-        for (int i = 0; i < row; i++){
-            for (int j = 0; j < col; j++){
-                result.cell[j][i] = pow(-1, i + j + + 1 + 1) * ((this->substr(i, j)).det());
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                result.cell[j][i] = pow(-1, i + j + +1 + 1) * ((this->substr(i, j)).det());
             }
         }
         return result;
@@ -188,14 +292,16 @@ matrix matrix::adj(){
 int main()
 {
     matrix s(
-        {{1,0,1},
-        {2,-1,3},
-        {-4,1,5}});
+        {{1, 0, 1},
+         {2, -1, 3},
+         {-4, 1, 5}});
     // cout << s.cell[2][3] << endl;
     cout << s.col;
     cout << s.row << endl;
     cout << s;
-    cout << s.adj();
-    // cout << 
+    int c = 2;
+    cout << (c - s);
+    // cout << c+s;
+    // cout <<
     return 0;
 }
